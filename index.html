@@ -636,9 +636,92 @@ a:hover{text-decoration:underline}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ---------- team lock ---------- */
+body.auth-lock{overflow:hidden}
+body.auth-lock .site-header,
+body.auth-lock main,
+body.auth-lock .tabbar,
+body.auth-lock .drawer,
+body.auth-lock .scrim,
+body.auth-lock .overlay{display:none!important}
+.lock{
+  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;
+  background-color:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
+  background-size:260px 260px;
+}
+.lock[hidden]{display:none}
+.lock-card{
+  width:100%;max-width:430px;background:var(--card);border:1px solid var(--ink);
+  padding:30px 28px 24px;box-shadow:var(--shadow);
+}
+.lock-brand{font-size:15px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.lock-brand .star{color:var(--blue)}
+.lock-eyebrow{margin-top:24px;font-size:9px;letter-spacing:.16em;font-weight:800;color:var(--blue)}
+.lock-title{margin-top:7px;font-size:24px;font-weight:800;letter-spacing:-.035em;line-height:1.15}
+.lock-sub{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.55}
+.lock-form{margin-top:18px}
+#lockInput{
+  width:100%;border:1px solid var(--line);background:#fff;padding:12px 13px;
+  font-family:inherit;font-size:17px;letter-spacing:.34em;color:var(--ink);
+  border-radius:var(--r);min-height:48px;font-variant-numeric:tabular-nums;
+}
+#lockInput::placeholder{letter-spacing:.2em;color:var(--muted-2)}
+#lockInput:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.lock-err{margin-top:8px;font-size:11px;font-weight:700;color:var(--danger)}
+.lock-err[hidden]{display:none}
+.lock-btn-full{margin-top:12px;width:100%;min-height:44px}
+.lock-note{margin-top:14px;font-size:10.5px;color:var(--muted-2);line-height:1.55}
+.lock-foot{
+  margin-top:20px;padding-top:12px;border-top:1px solid var(--line-faint);
+  font-size:8.5px;letter-spacing:.13em;font-weight:800;color:var(--muted-2);
+  display:flex;justify-content:space-between;gap:8px;text-transform:uppercase;
+}
+.lock-shake{animation:lockShake .32s}
+@keyframes lockShake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* ---------- header sync / lock ---------- */
+.header-mini{
+  border:1px solid var(--line);background:#fff;padding:4px 9px;font-size:11px;font-weight:700;
+  color:var(--ink-2);cursor:pointer;border-radius:var(--r);min-height:28px;line-height:1;
+  transition:border-color .14s,color .14s;
+}
+.header-mini:hover{border-color:var(--ink);color:var(--ink)}
+.sync-note{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap}
+.sync-note i{width:6px;height:6px;border-radius:50%;background:var(--muted-2);display:inline-block;flex:0 0 auto}
+.sync-note.ok i{background:var(--ok)}
+.sync-note.busy i{background:var(--blue);animation:syncPulse 1s infinite}
+.sync-note.bad{color:var(--danger)}
+.sync-note.bad i{background:var(--danger)}
+@keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.2}}
+@media (max-width:640px){
+  .lock{padding:16px}
+  .lock-card{padding:24px 20px 20px}
+  .lock-title{font-size:21px}
+  .header-date{display:none}
+  .sync-note .lbl-long{display:none}
+}
 </style>
 </head>
-<body data-view="list">
+<body data-view="list" class="auth-lock">
+
+<div class="lock" id="lockScreen" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+  <div class="lock-card" id="lockCard">
+    <div class="lock-brand">BPCO OOH<span class="star">*</span>PRODUCTION</div>
+    <div class="lock-eyebrow">TEAM ACCESS</div>
+    <h1 class="lock-title" id="lockTitle">팀 공용 비밀번호</h1>
+    <p class="lock-sub">OOH팀 · 영상팀 공용 비밀번호를 입력하면 통합 현황이 열립니다.</p>
+    <form class="lock-form" id="lockForm" novalidate>
+      <input id="lockInput" type="password" inputmode="numeric" autocomplete="current-password"
+             maxlength="12" placeholder="••••" aria-label="팀 공용 비밀번호">
+      <p class="lock-err" id="lockErr" hidden>비밀번호가 올바르지 않습니다. 다시 확인해 주세요.</p>
+      <button class="btn btn-primary lock-btn-full" type="submit">잠금 해제</button>
+    </form>
+    <p class="lock-note">* 이 기기에서는 한 번 입력하면 다시 묻지 않습니다. 헤더의 ‘잠금’ 버튼으로 언제든 다시 잠글 수 있습니다.</p>
+    <div class="lock-foot"><span>Look up! It's BPCO</span><span>Un ordinary OOH collective</span></div>
+  </div>
+</div>
 
 <header class="site-header">
   <div class="header-inner">
@@ -657,6 +740,9 @@ a:hover{text-decoration:underline}
           <button class="nav-item" aria-current="true" type="button">통합 현황</button>
           <button class="nav-item" type="button" data-act="new-request">촬영 요청</button>
         </nav>
+        <span class="sync-note" id="syncNote"><i></i><span class="lbl">연결 중…</span></span>
+        <button class="header-mini" type="button" data-act="refresh" aria-label="새로고침" title="새로고침">↻</button>
+        <button class="header-mini" type="button" data-act="lock" aria-label="잠금" title="잠금">잠금</button>
         <span class="header-date num" id="headerDate">2026.11.25</span>
         <button class="btn btn-sm btn-header-new" type="button" data-act="new-request">＋ 촬영 요청</button>
       </div>
@@ -743,8 +829,8 @@ a:hover{text-decoration:underline}
   <footer class="site-foot">
     <div class="fw">BPCO OOH<span class="star">*</span>PRODUCTION <span style="color:var(--muted-2);font-weight:600">— renewal prototype</span></div>
     <div class="foot-right">
-      <span id="storageNote">데이터는 이 브라우저(localStorage)에만 저장됩니다.</span>
-      <button class="link-btn" type="button" data-act="reset-samples">샘플 초기화</button>
+      <span id="storageNote">Supabase 실시간 공유 · <b id="footSync">연결 중…</b></span>
+      <button class="link-btn" type="button" data-act="refresh">새로고침</button>
     </div>
   </footer>
 </main>
@@ -786,6 +872,7 @@ a:hover{text-decoration:underline}
 
 <noscript><div style="padding:24px;background:#fff">이 프로토타입은 JavaScript가 필요합니다.</div></noscript>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
 'use strict';
@@ -793,7 +880,10 @@ a:hover{text-decoration:underline}
 /* ------------------------------------------------------------------
    0. constants
 ------------------------------------------------------------------ */
-var STORE_KEY = 'bpco.ooh.renewal.v1';
+var SUPABASE_URL = 'https://ppnlmuemvylzzhrwdiyz.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwbmxtdWVtdnlsenpocndkaXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU1OTM0NjMsImV4cCI6MjExMTE2OTQ2M30.yfBmXXRCM8jWn2SqmY6hBxb33iINTHuac17_70py5gI';
+var TEAM_PASSWORD = '0815';
+var AUTH_KEY = 'bpco.ooh.team.access.v1';
 var PARTS = ['OOH1','OOH2','OOH3','기타'];
 var WORKS = ['사진 촬영','영상 제작','기타'];
 var RATIOS = ['16:9','9:16','1:1','4:5'];
@@ -907,128 +997,207 @@ function nextCode(){
 function nowISO(){ return new Date().toISOString(); }
 
 /* ------------------------------------------------------------------
-   2. storage + seed
+   2. supabase client · data access (실시간 공유 DB)
 ------------------------------------------------------------------ */
-var storageOK = true;
-function save(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify({requests:state.requests, seq:state.seq})); }
-  catch(e){ storageOK = false; }
-  var note = document.getElementById('storageNote');
-  if(note && !storageOK){
-    note.textContent = '저장소를 쓸 수 없어 이 화면에서만 유지됩니다.';
-    note.style.color = '#884600';
-  }
-}
-function load(){
-  try{
-    var raw = localStorage.getItem(STORE_KEY);
-    if(raw){
-      var d = JSON.parse(raw);
-      if(d && Array.isArray(d.requests)){
-        state.requests = d.requests;
-        state.seq = d.seq || d.requests.length;
-        return;
-      }
-    }
-  }catch(e){}
-  state.requests = seedRequests();
-  state.seq = state.requests.length;
-  save();
+var sb = null;
+function supa(){
+  if(sb) return sb;
+  if(!window.supabase || !window.supabase.createClient) return null;
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    realtime: { params: { eventsPerSecond: 5 } }
+  });
+  return sb;
 }
 
-function seedRequests(){
-  return [
-    {
-      code:'BPCO-26-001', part:'OOH1', advertiser:'무인양품(MUJI)',
-      campaignStart:'2026-12-01', campaignEnd:'2026-12-31',
-      works:['영상 제작'], deliveryWish:'2026-12-10',
-      ratio:'16:9', ratioCustom:'', duration:'30초', durationCustom:'',
-      place:'서울 성수 · 무인양품 팝업 스토어 외벽 미디어',
-      proposalUrl:'', note:'연말 시즌 캠페인. 매장 오픈(10:00) 이전 촬영 희망.',
-      status:'승인 대기',
-      shootDate:'', actualDelivery:'', youtubeAvailable:'',
-      createdAt:'2026-11-24T09:12:00+09:00', updatedAt:'2026-11-24T09:12:00+09:00', approvedAt:'',
-      scheduleChanged:false,
-      history:[
-        {at:'2026-11-24T09:12:00+09:00', by:'OOH팀', type:'등록', title:'촬영 요청 등록', changes:[], reason:''}
-      ]
-    },
-    {
-      code:'BPCO-26-002', part:'OOH2', advertiser:'스코플리(Scopely)',
-      campaignStart:'2026-11-20', campaignEnd:'2026-12-05',
-      works:['사진 촬영','영상 제작'], deliveryWish:'2026-11-30',
-      ratio:'9:16', ratioCustom:'', duration:'30초', durationCustom:'',
-      place:'서울 잠실 · 석촌호수 미디어월 / 팝업 광장',
-      proposalUrl:'https://www.youtube.com/@Bigpicture_Company',
-      note:'피카츄·이브이 조형물 설치 구간 집중 촬영. 현장 안전요원 동행 필요.',
-      status:'촬영 예정',
-      shootDate:'2026-11-27', actualDelivery:'2026-12-02', youtubeAvailable:'2026-12-03',
-      createdAt:'2026-11-12T10:20:00+09:00', updatedAt:'2026-11-19T16:05:00+09:00', approvedAt:'2026-11-13T09:40:00+09:00',
-      scheduleChanged:true,
-      history:[
-        {at:'2026-11-12T10:20:00+09:00', by:'OOH팀', type:'등록', title:'촬영 요청 등록', changes:[], reason:''},
-        {at:'2026-11-13T09:40:00+09:00', by:'영상팀', type:'승인', title:'요청 승인 · 촬영 예정으로 변경', note:'조율 일정 확정하여 승인합니다.',
-          changes:[
-            {key:'shootDate', label:'촬영일', from:'', to:'2026-11-24'},
-            {key:'actualDelivery', label:'실제 납품일', from:'', to:'2026-12-02'},
-            {key:'youtubeAvailable', label:'유튜브 업로드 가능일', from:'', to:'2026-12-03'}
-          ], reason:''},
-        {at:'2026-11-19T16:05:00+09:00', by:'영상팀', type:'일정 변경', title:'외부 일정으로 촬영일 변경',
-          changes:[{key:'shootDate', label:'촬영일', from:'2026-11-24', to:'2026-11-27'}],
-          reason:'본사 글로벌 촬영 로케가 11/24로 확정되어 외부 일정과 겹쳤습니다. 촬영팀·현장 대관을 11/27로 재조율했습니다. (실제 납품일·유튜브 공개일 변동 없음)'}
-      ]
-    },
-    {
-      code:'BPCO-26-003', part:'OOH3', advertiser:'메노킨(Menokin)',
-      campaignStart:'2026-11-10', campaignEnd:'2026-11-30',
-      works:['영상 제작'], deliveryWish:'2026-11-24',
-      ratio:'1:1', ratioCustom:'', duration:'15초', durationCustom:'',
-      place:'서울 강남 · 지하철 2호선 스크린',
-      proposalUrl:'', note:'',
-      status:'촬영 완료',
-      shootDate:'2026-11-19', actualDelivery:'', youtubeAvailable:'2026-11-28',
-      createdAt:'2026-11-04T14:02:00+09:00', updatedAt:'2026-11-19T18:20:00+09:00', approvedAt:'2026-11-05T10:15:00+09:00',
-      scheduleChanged:false,
-      history:[
-        {at:'2026-11-04T14:02:00+09:00', by:'OOH팀', type:'등록', title:'촬영 요청 등록', changes:[], reason:''},
-        {at:'2026-11-05T10:15:00+09:00', by:'영상팀', type:'승인', title:'요청 승인 · 촬영 예정으로 변경',
-          changes:[
-            {key:'shootDate', label:'촬영일', from:'', to:'2026-11-19'},
-            {key:'actualDelivery', label:'실제 납품일', from:'', to:'2026-11-26'},
-            {key:'youtubeAvailable', label:'유튜브 업로드 가능일', from:'', to:'2026-11-28'}
-          ], reason:''},
-        {at:'2026-11-19T18:20:00+09:00', by:'영상팀', type:'상태 변경', title:'촬영 완료로 변경',
-          changes:[{key:'status', label:'상태', from:'촬영 예정', to:'촬영 완료'}],
-          note:'촬영 종료. 편집 11/23 착수 예정.', reason:''}
-      ]
-    },
-    {
-      code:'BPCO-26-004', part:'기타', advertiser:'틴더(Tinder)',
-      campaignStart:'2026-11-01', campaignEnd:'2026-11-25',
-      works:['사진 촬영','영상 제작'], deliveryWish:'2026-11-20',
-      ratio:'4:5', ratioCustom:'', duration:'15초', durationCustom:'',
-      place:'서울 홍대 · 틴더 패스포트 라운지 팝업',
-      proposalUrl:'', note:'라운지 내부 인테리어 컷 + 숏폼 3종.',
-      status:'납품 완료',
-      shootDate:'2026-11-12', actualDelivery:'2026-11-20', youtubeAvailable:'2026-11-21',
-      createdAt:'2026-10-28T11:35:00+09:00', updatedAt:'2026-11-20T17:10:00+09:00', approvedAt:'2026-10-29T09:05:00+09:00',
-      scheduleChanged:false,
-      history:[
-        {at:'2026-10-28T11:35:00+09:00', by:'OOH팀', type:'등록', title:'촬영 요청 등록', changes:[], reason:''},
-        {at:'2026-10-29T09:05:00+09:00', by:'영상팀', type:'승인', title:'요청 승인 · 촬영 예정으로 변경',
-          changes:[
-            {key:'shootDate', label:'촬영일', from:'', to:'2026-11-12'},
-            {key:'actualDelivery', label:'실제 납품일', from:'', to:'2026-11-20'},
-            {key:'youtubeAvailable', label:'유튜브 업로드 가능일', from:'', to:'2026-11-21'}
-          ], reason:''},
-        {at:'2026-11-13T10:40:00+09:00', by:'영상팀', type:'상태 변경', title:'촬영 완료로 변경',
-          changes:[{key:'status', label:'상태', from:'촬영 예정', to:'촬영 완료'}], note:'', reason:''},
-        {at:'2026-11-20T17:10:00+09:00', by:'영상팀', type:'상태 변경', title:'납품 완료로 변경',
-          changes:[{key:'status', label:'상태', from:'촬영 완료', to:'납품 완료'}],
-          note:'최종본 전달 완료 (마스터 + 숏폼 3종).', reason:''}
-      ]
+var syncState = { loading:false, pending:0, lastAt:null, live:false, err:'', started:false };
+
+function p2(n){ return (n<10?'0':'')+n; }
+function toLocalISO(v){
+  if(!v) return '';
+  var d = new Date(v);
+  if(isNaN(d.getTime())) return '';
+  var off = -d.getTimezoneOffset();
+  var sign = off >= 0 ? '+' : '-';
+  var a = Math.abs(off);
+  return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'T'+
+    p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds())+
+    sign+p2(Math.floor(a/60))+':'+p2(a%60);
+}
+function orEmpty(v){ return v == null ? '' : v; }
+
+/* DB row -> 앱 레코드 (기존 시안 필드와 1:1) */
+function rowToReq(row){
+  return {
+    code: row.code,
+    part: row.part,
+    advertiser: row.advertiser,
+    campaignStart: orEmpty(row.campaign_start),
+    campaignEnd: orEmpty(row.campaign_end),
+    works: Array.isArray(row.works) ? row.works : [],
+    deliveryWish: orEmpty(row.delivery_wish),
+    ratio: orEmpty(row.ratio),
+    ratioCustom: orEmpty(row.ratio_custom),
+    duration: orEmpty(row.duration),
+    durationCustom: orEmpty(row.duration_custom),
+    place: orEmpty(row.place),
+    proposalUrl: orEmpty(row.proposal_url),
+    note: orEmpty(row.note),
+    status: row.status,
+    shootDate: orEmpty(row.shoot_date),
+    actualDelivery: orEmpty(row.actual_delivery),
+    youtubeAvailable: orEmpty(row.youtube_available),
+    createdAt: toLocalISO(row.created_at),
+    updatedAt: toLocalISO(row.updated_at),
+    approvedAt: toLocalISO(row.approved_at),
+    scheduleChanged: !!row.schedule_changed,
+    history: Array.isArray(row.history) ? row.history : []
+  };
+}
+/* 앱 레코드 -> DB row */
+function reqToRow(r){
+  function d(v){ return v ? v : null; }
+  return {
+    code: r.code,
+    part: r.part,
+    advertiser: r.advertiser,
+    campaign_start: d(r.campaignStart),
+    campaign_end: d(r.campaignEnd),
+    works: r.works || [],
+    delivery_wish: d(r.deliveryWish),
+    ratio: r.ratio || '',
+    ratio_custom: r.ratioCustom || '',
+    duration: r.duration || '',
+    duration_custom: r.durationCustom || '',
+    place: r.place || '',
+    proposal_url: r.proposalUrl || '',
+    note: r.note || '',
+    status: r.status,
+    shoot_date: d(r.shootDate),
+    actual_delivery: d(r.actualDelivery),
+    youtube_available: d(r.youtubeAvailable),
+    created_at: r.createdAt || nowISO(),
+    updated_at: r.updatedAt || nowISO(),
+    approved_at: d(r.approvedAt),
+    schedule_changed: !!r.scheduleChanged,
+    history: r.history || []
+  };
+}
+
+function maxSeq(list){
+  var m = 0;
+  (list||[]).forEach(function(r){
+    var mm = /-(\d+)$/.exec(r.code||'');
+    if(mm){ var n = parseInt(mm[1], 10); if(n > m) m = n; }
+  });
+  return m;
+}
+
+/* 동기화 상태 표시 */
+function setSyncNote(){
+  var note = document.getElementById('syncNote');
+  var foot = document.getElementById('footSync');
+  var cls = '', text = '';
+  if(syncState.err){
+    cls = 'bad'; text = '연결 오류';
+  } else if(syncState.loading || syncState.pending){
+    cls = 'busy'; text = '동기화 중…';
+  } else if(syncState.lastAt){
+    var d = syncState.lastAt;
+    cls = 'ok';
+    text = (syncState.live ? '<span class="lbl-long">실시간 연결 · </span>' : '') + p2(d.getHours())+':'+p2(d.getMinutes())+' 동기화';
+  } else {
+    cls = 'busy'; text = '연결 중…';
+  }
+  if(note){
+    note.className = 'sync-note ' + cls;
+    var lbl = note.querySelector('.lbl');
+    if(lbl) lbl.innerHTML = text;
+  }
+  if(foot) foot.textContent = text.replace(/<[^>]*>/g,'') || '연결 중…';
+  var sn = document.getElementById('storageNote');
+  if(sn) sn.style.color = '';
+}
+
+/* DB 전체 읽기 */
+function fetchAll(quiet){
+  var s = supa();
+  if(!s){ syncState.err = 'supabase-js 라이브러리를 불러오지 못했습니다.'; setSyncNote(); return; }
+  if(!quiet) syncState.loading = true;
+  setSyncNote();
+  s.from('requests').select('*').order('code', {ascending:true}).then(function(res){
+    syncState.loading = false;
+    if(res.error){
+      syncState.err = res.error.message || '조회 실패';
+      setSyncNote();
+      toast('DB 조회 실패 · ' + syncState.err);
+      return;
     }
-  ];
+    syncState.err = '';
+    syncState.lastAt = new Date();
+    state.requests = (res.data||[]).map(rowToReq);
+    if(state.seq < maxSeq(state.requests)) state.seq = maxSeq(state.requests);
+    setSyncNote();
+    render();
+  });
+}
+
+/* 레코드 1건 저장 (isNew ? insert : update) */
+function persist(r, isNew, retry){
+  var s = supa();
+  if(!s){ toast('DB 연결이 없어 저장하지 못했습니다'); return; }
+  syncState.pending++;
+  setSyncNote();
+  var row = reqToRow(r);
+  var q = isNew ? s.from('requests').insert([row]) : s.from('requests').update(row).eq('code', r.code);
+  q.then(function(res){
+    syncState.pending--;
+    if(res.error){
+      setSyncNote();
+      if(isNew && !retry && String(res.error.code) === '23505'){
+        r.code = nextCode();
+        persist(r, true, true);
+        return;
+      }
+      toast('저장 실패 · ' + (res.error.message || '알 수 없는 오류'));
+      fetchAll(true);
+      return;
+    }
+    syncState.lastAt = new Date();
+    setSyncNote();
+  });
+}
+
+/* 실시간 구독 */
+var reloadTimer = null;
+function queueReload(){
+  clearTimeout(reloadTimer);
+  reloadTimer = setTimeout(function(){ fetchAll(true); }, 350);
+}
+function subscribeRealtime(s){
+  if(!s || s.__bpcoChannel) return;
+  s.__bpcoChannel = s.channel('bpco-ooh-requests')
+    .on('postgres_changes', {event:'*', schema:'public', table:'requests'}, function(){
+      queueReload();
+    })
+    .subscribe(function(status){
+      syncState.live = (status === 'SUBSCRIBED');
+      setSyncNote();
+    });
+}
+function startData(){
+  if(syncState.started) return;
+  var s = supa();
+  if(!s){
+    syncState.err = 'supabase-js 라이브러리를 불러오지 못했습니다. 새로고침해 주세요.';
+    setSyncNote();
+    return;
+  }
+  syncState.started = true;
+  fetchAll();
+  subscribeRealtime(s);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) fetchAll(true); });
+  window.addEventListener('focus', function(){ fetchAll(true); });
 }
 
 /* ------------------------------------------------------------------
@@ -1176,6 +1345,11 @@ function cardHTML(r){
 }
 
 function renderList(){
+  if(syncState.loading && !state.requests.length){
+    elListCount.textContent = '';
+    elList.innerHTML = '<div class="empty"><span class="big">*</span>Supabase에서 요청을 불러오는 중입니다…</div>';
+    return;
+  }
   var rows = visibleRequests();
   elListCount.textContent = rows.length + ' / ' + state.requests.length;
   if(!rows.length){
@@ -1733,7 +1907,7 @@ function submitRequest(form){
     }]
   };
   state.requests.push(r);
-  save();
+  persist(r, true);
   render();
   toast('요청이 등록되었습니다 · 영상팀 승인 대기');
   return true;
@@ -1797,7 +1971,7 @@ function openApprove(code){
         by:'영상팀', type:'승인', title:'요청 승인 · 촬영 예정으로 변경',
         changes: changes, note: memo, reason: ''
       });
-      save(); render();
+      persist(r); render();
       toast('승인 완료 · 촬영 예정으로 변경되었습니다');
       return true;
     }
@@ -1872,7 +2046,7 @@ function openStatus(code){
         by:'영상팀', type:'상태 변경', title:nextStatus+'로 변경',
         changes: changes, note: memo, reason: ''
       });
-      save(); render();
+      persist(r); render();
       toast('상태가 '+nextStatus+'(으)로 변경되었습니다');
       return true;
     }
@@ -1973,7 +2147,7 @@ function openChange(code, prefill){
         note: '',
         reason: reason
       });
-      save(); render();
+      persist(r); render();
       toast(isWait ? '조율안이 저장되었습니다' : '일정 변경이 저장되었습니다');
       return true;
     }
@@ -2023,7 +2197,7 @@ function openCancel(code){
         changes: [{key:'status', label:'상태', from:prev, to:'취소됨'}],
         reason: reason
       });
-      save(); render();
+      persist(r); render();
       toast('촬영이 취소되었습니다 · 기록 보관');
       return true;
     }
@@ -2046,7 +2220,7 @@ function saveCoord(code){
       by:'영상팀', type:'일정 조율', title:'조율 일정 입력',
       changes: changes, note:'', reason:''
     });
-    save(); render();
+    persist(r); render();
     toast('조율안이 저장되었습니다 · 승인 대기 유지');
   } else {
     openChange(code, next);
@@ -2068,33 +2242,6 @@ function addHistory(r, entry){
 /* ------------------------------------------------------------------
    12. misc actions
 ------------------------------------------------------------------ */
-function resetSamples(){
-  openModal({
-    eyebrow: 'RESET',
-    title: '샘플 데이터 초기화',
-    sub: '이 브라우저에 저장된 요청과 히스토리를 모두 지웁니다.',
-    body: '<p style="font-size:12.5px;line-height:1.6;color:var(--ink-2)">'+
-      '초기화하면 OOH 예시 4건(승인 대기 · 촬영 예정 · 촬영 완료 · 납품 완료)과 '+
-      '스코플리 건의 <b>외부 일정 촬영일 변경</b> 히스토리가 다시 채워집니다.</p>'+
-      '<p style="font-size:11px;color:var(--muted);margin-top:8px">되돌릴 수 없습니다.</p>',
-    foot: '<button class="btn btn-ghost" type="button" data-act="modal-close">취소</button>'+
-          '<button class="btn btn-danger" type="button" data-act="confirm-reset">초기화</button>'
-  });
-}
-
-function doReset(){
-  state.requests = seedRequests();
-  state.seq = state.requests.length;
-  state.filters = {part:'전체', status:'전체'};
-  state.openId = null;
-  state.selectedDate = todayISO();
-  save();
-  closeDrawer();
-  closeModal();
-  render();
-  toast('샘플 데이터로 초기화되었습니다');
-}
-
 /* ------------------------------------------------------------------
    13. render all + init
 ------------------------------------------------------------------ */
@@ -2118,7 +2265,11 @@ function render(){
   renderFilters();
   renderList();
   renderCalendar();
-  if(state.openId) renderDrawer();
+  if(state.openId){
+    var ae = document.activeElement;
+    var busy = ae && elDrawer.contains(ae) && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+    if(!busy) renderDrawer();
+  }
   var d = new Date();
   document.getElementById('headerDate').textContent = d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate());
 }
@@ -2162,8 +2313,8 @@ document.addEventListener('click', function(ev){
   if(act === 'change-schedule'){ openChange(actEl.getAttribute('data-id')); return; }
   if(act === 'cancel-shoot'){ openCancel(actEl.getAttribute('data-id')); return; }
   if(act === 'save-coord'){ saveCoord(actEl.getAttribute('data-id')); return; }
-  if(act === 'reset-samples'){ resetSamples(); return; }
-  if(act === 'confirm-reset'){ doReset(); return; }
+  if(act === 'refresh'){ fetchAll(); toast('최신 데이터를 불러옵니다'); return; }
+  if(act === 'lock'){ lockNow(); return; }
 });
 
 document.addEventListener('keydown', function(ev){
@@ -2184,21 +2335,83 @@ document.addEventListener('keydown', function(ev){
 elModalBody.addEventListener('input', clearErrs);
 elModalBody.addEventListener('change', clearErrs);
 
+/* ------------------------------------------------------------------
+   14. team lock (공용 비밀번호)
+------------------------------------------------------------------ */
+var sessionOK = false;
+function isUnlocked(){
+  if(sessionOK) return true;
+  try{ return localStorage.getItem(AUTH_KEY) === 'v1'; }catch(e){ return false; }
+}
+function showLock(){
+  document.body.classList.add('auth-lock');
+  var box = document.getElementById('lockScreen');
+  if(box) box.hidden = false;
+  var inp = document.getElementById('lockInput');
+  if(inp){ inp.value = ''; setTimeout(function(){ inp.focus(); }, 80); }
+}
+function hideLock(){
+  document.body.classList.remove('auth-lock');
+  var box = document.getElementById('lockScreen');
+  if(box) box.hidden = true;
+}
+function unlock(remember){
+  sessionOK = true;
+  if(remember){ try{ localStorage.setItem(AUTH_KEY, 'v1'); }catch(e){} }
+  hideLock();
+  startData();
+}
+function lockNow(){
+  sessionOK = false;
+  try{ localStorage.removeItem(AUTH_KEY); }catch(e){}
+  closeDrawer();
+  closeModal();
+  showLock();
+  var err = document.getElementById('lockErr');
+  if(err) err.hidden = true;
+}
+function submitLock(ev){
+  ev.preventDefault();
+  var inp = document.getElementById('lockInput');
+  var val = ((inp && inp.value) || '').trim();
+  if(val === TEAM_PASSWORD){ unlock(true); return; }
+  var err = document.getElementById('lockErr');
+  if(err) err.hidden = false;
+  var card = document.getElementById('lockCard');
+  if(card){
+    card.classList.remove('lock-shake');
+    void card.offsetWidth;
+    card.classList.add('lock-shake');
+  }
+  if(inp){ inp.value = ''; inp.focus(); }
+}
+
 /* ---- boot ---- */
 function boot(){
   var d = new Date();
   state.cal.y = d.getFullYear();
   state.cal.m = d.getMonth();
   state.selectedDate = todayISO();
-  load();
   renderVideos();
-  render();
+  var form = document.getElementById('lockForm');
+  if(form) form.addEventListener('submit', submitLock);
+  if(isUnlocked()){
+    hideLock();
+    startData();
+  } else {
+    showLock();
+  }
+  setSyncNote();
 }
 boot();
 
 /* expose a tiny debug hook for verification (read-only) */
 window.__bpco = {
   state: state,
+  sync: syncState,
+  reload: fetchAll,
+  lock: lockNow,
+  db: function(){ return supa(); },
   open: openDrawer,
   close: closeDrawer,
   approve: openApprove,
@@ -2208,8 +2421,7 @@ window.__bpco = {
   coord: saveCoord,
   render: render,
   pickDay: pickDay,
-  form: openRequestSheet,
-  reset: doReset
+  form: openRequestSheet
 };
 
 })();
