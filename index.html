@@ -1352,6 +1352,12 @@ function renderList(){
   }
   var rows = visibleRequests();
   elListCount.textContent = rows.length + ' / ' + state.requests.length;
+  if(!state.requests.length){
+    elList.innerHTML = '<div class="empty"><span class="big">*</span>등록된 촬영 요청이 없습니다.<br>'+
+      '<span style="display:inline-block;margin-top:6px;color:var(--muted-2)">＋ 촬영 요청으로 첫 요청을 등록하면 승인 대기로 접수됩니다.</span><br>'+
+      '<button class="link-btn" style="margin-top:10px" type="button" data-act="new-request">＋ 촬영 요청 등록</button></div>';
+    return;
+  }
   if(!rows.length){
     elList.innerHTML = '<div class="empty"><span class="big">*</span>조건에 맞는 요청이 없습니다.<br><button class="link-btn" style="margin-top:10px" type="button" data-act="reset-filters">필터 초기화</button></div>';
     return;
@@ -1480,12 +1486,22 @@ function renderDayDetail(date, map){
 /* ------------------------------------------------------------------
    6. drawer (PC slide / mobile sheet)
 ------------------------------------------------------------------ */
+/* 변경 내역 값 표시: 상태값은 문자열 그대로, 날짜 필드는 날짜 포맷으로 */
+function isStatusValue(key, val){
+  if(key === 'status') return true;
+  return val != null && val !== '' && STATUSES.indexOf(String(val)) >= 0;
+}
+function fmtChangeVal(key, val){
+  if(val == null || val === '') return '미정';
+  if(isStatusValue(key, val)) return String(val);
+  return fmtDotOr(val, '미정');
+}
 function changesHTML(changes){
   if(!changes || !changes.length) return '';
   return changes.map(function(c){
     return '<div class="chg"><span class="k">'+esc(c.label)+'</span>'+
-      '<s>'+esc(fmtDotOr(c.from,'미정'))+'</s><span class="arrow">→</span>'+
-      '<b>'+esc(fmtDotOr(c.to,'미정'))+'</b></div>';
+      '<s>'+esc(fmtChangeVal(c.key, c.from))+'</s><span class="arrow">→</span>'+
+      '<b>'+esc(fmtChangeVal(c.key, c.to))+'</b></div>';
   }).join('');
 }
 
