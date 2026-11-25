@@ -2265,6 +2265,7 @@ function render(){
   renderFilters();
   renderList();
   renderCalendar();
+  if(state.openId && !getReq(state.openId)) closeDrawer();
   if(state.openId){
     var ae = document.activeElement;
     var busy = ae && elDrawer.contains(ae) && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
