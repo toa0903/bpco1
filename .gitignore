@@ -1,0 +1,3 @@
+tools/shots/
+tools/*.png
+__pycache__/
